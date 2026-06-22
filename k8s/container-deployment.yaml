@@ -1,0 +1,44 @@
+# Container baseline: standard Deployment + Service.
+# Identical resource limits/requests to the SpinApp so the only difference
+# measured is the execution model.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-container
+  labels:
+    app: hello-container
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-container
+  template:
+    metadata:
+      labels:
+        app: hello-container
+    spec:
+      containers:
+        - name: hello
+          image: ttl.sh/hello-container:24h
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "64Mi"
+            requests:
+              cpu: "50m"
+              memory: "16Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-container
+  labels:
+    app: hello-container
+spec:
+  selector:
+    app: hello-container
+  ports:
+    - port: 80
+      targetPort: 8080

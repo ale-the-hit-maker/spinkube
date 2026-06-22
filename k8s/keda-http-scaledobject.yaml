@@ -1,0 +1,20 @@
+# True scale-to-zero for HTTP, via the KEDA HTTP Add-on.
+# Requires the add-on installed (the interceptor holds the first request while
+# the Deployment scales 0 -> 1, so cold start is paid only on the first hit).
+# This is the manifest used in the vertical demo.
+apiVersion: http.keda.sh/v1alpha1
+kind: HTTPScaledObject
+metadata:
+  name: hello-spin
+spec:
+  hosts:
+    - "hello.spinkube.local"
+  scaleTargetRef:
+    name: hello-spin
+    kind: Deployment
+    apiVersion: apps/v1
+    service: hello-spin
+    port: 80
+  replicas:
+    min: 0          # scale-to-zero when idle
+    max: 10

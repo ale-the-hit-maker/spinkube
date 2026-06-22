@@ -1,0 +1,23 @@
+# Wasm workload, managed by the Spin Operator.
+# The operator reconciles this into a Deployment + Service whose Pods use
+# runtimeClassName: spin (the containerd-shim-spin executor).
+apiVersion: core.spinkube.dev/v1alpha1
+kind: SpinApp
+metadata:
+  name: hello-spin
+  labels:
+    app: hello-spin
+spec:
+  image: "ttl.sh/hello-spin:24h"
+  executor: containerd-shim-spin
+  replicas: 1
+  podLabels:
+    app: hello-spin
+  # Same limits/requests as the container baseline -> fair comparison.
+  resources:
+    limits:
+      cpu: "200m"
+      memory: "64Mi"
+    requests:
+      cpu: "50m"
+      memory: "16Mi"
